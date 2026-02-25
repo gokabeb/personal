@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@astrojs/node": "^9.5.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/tailwind": "^6.0.2",
     "@notionhq/client": "^5.9.0",
