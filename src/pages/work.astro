@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RuleHeading from '../components/ui/RuleHeading.astro';
+import PullQuote from '../components/ui/PullQuote.astro';
+import Byline from '../components/ui/Byline.astro';
+import VideoCard from '../components/interactive/VideoCard.jsx';
+import TagFilter from '../components/interactive/TagFilter.jsx';
+import ProjectUpdateLog from '../components/interactive/ProjectUpdateLog.jsx';
+import { projects } from '../data/projects.js';
+---
+
+<BaseLayout title="Work">
+  <div class="max-w-content mx-auto px-6 py-10">
+
+    <div class="mb-6">
+      <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-2">
+        Work
+      </h1>
+      <p class="font-serif text-body text-ink-secondary max-w-[60ch]">
+        Projects at the intersection of technology, community, and language —
+        from nonprofit engineering to neuroscience research to civic poetry.
+      </p>
+    </div>
+
+    <!-- TagFilter controls project visibility client-side -->
+    <div id="work-filter-root">
+      <TagFilter client:visible id="tag-filter" />
+    </div>
+
+    <!-- Projects list -->
+    <div id="projects-container">
+      {projects.map((project) => (
+        <article
+          id={project.slug}
+          data-category={project.category}
+          class="project-entry py-12 border-b border-rule transition-opacity duration-300"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-8">
+              <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-2">
+                {project.label}
+              </span>
+              <h2 class="font-display font-black text-headline text-ink leading-[1.1] mb-3">
+                {project.headline}
+              </h2>
+              <Byline date={project.updates?.[project.updates.length - 1]?.date} location="San Francisco, CA" />
+
+              {project.bodyParagraphs.map((para) => (
+                <p class="font-serif text-body text-ink-secondary leading-relaxed mb-4">
+                  {para}
+                </p>
+              ))}
+
+              <PullQuote quote={project.pullQuote} attribution={project.title} />
+
+              <ProjectUpdateLog
+                client:load
+                updates={project.updates}
+                projectSlug={project.slug}
+              />
+            </div>
+
+            <div class="lg:col-span-4">
+              <VideoCard
+                client:load
+                label={project.label}
+                headline={project.title}
+                lede={project.lede}
+                href={`#${project.slug}`}
+                videoUrl={project.videoUrl}
+                videoPlaceholder={project.videoPlaceholder}
+              />
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <!-- Client-side filter logic -->
+  <script>
+    // Listen for custom filter events from TagFilter React component
+    // TagFilter communicates via a custom DOM event
+    document.addEventListener('tagfilter:change', (e: any) => {
+      const category = e.detail;
+      document.querySelectorAll('.project-entry').forEach((el: Element) => {
+        const cat = (el as HTMLElement).dataset.category;
+        if (category === 'ALL' || cat === category) {
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.pointerEvents = 'auto';
+        } else {
+          (el as HTMLElement).style.opacity = '0.2';
+          (el as HTMLElement).style.pointerEvents = 'none';
+        }
+      });
+    });
+  </script>
+</BaseLayout>

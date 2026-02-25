@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CommonplaceBook from '../components/commonplace/CommonplaceBook.jsx';
+import { commonplaceEntries } from '../data/placeholder-commonplace.js';
+---
+
+<BaseLayout title="Commonplace Book">
+  <div class="max-w-content mx-auto px-6 py-10">
+
+    <div class="max-w-[75ch] mx-auto mb-10">
+      <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">
+        The Commonplace Book
+      </span>
+      <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-4">
+        A Constellation of Ideas
+      </h1>
+      <p class="font-serif text-body text-ink-secondary leading-relaxed mb-2">
+        A living archive of quotes, annotations, and intellectual cross-pollination —
+        the compost pile that feeds everything else. Entries are connected by semantic
+        similarity; the constellation view visualizes those relationships.
+      </p>
+      <p class="font-mono text-[0.65rem] tracking-wider uppercase text-ink-muted">
+        {commonplaceEntries.length} entries · Toggle to constellation view to see connections
+      </p>
+    </div>
+
+    <hr class="border-rule mb-10" />
+
+    <!-- CommonplaceBook React island: list + constellation views, modal, search -->
+    <CommonplaceBook
+      client:load
+      entries={commonplaceEntries}
+    />
+
+  </div>
+</BaseLayout>

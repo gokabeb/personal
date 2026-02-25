@@ -1,0 +1,62 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16 border-t-2 border-ink">
+  <div class="max-w-content mx-auto px-6 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Column 1: Publication info -->
+      <div>
+        <p class="font-display font-black text-ink text-xl mb-2">The Karan Gupta</p>
+        <p class="font-mono text-[0.65rem] tracking-[0.15em] uppercase text-ink-muted">
+          Poet · Researcher · Builder · Founder
+        </p>
+        <p class="font-mono text-[0.65rem] text-ink-muted mt-2">
+          San Francisco, California
+        </p>
+      </div>
+
+      <!-- Column 2: Navigation -->
+      <div class="text-center">
+        <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted mb-3">Navigate</p>
+        <nav class="flex flex-col gap-1">
+          {['/', '/work', '/poetry', '/commonplace', '/about', '/contact'].map((href, i) => (
+            <a
+              href={href}
+              class="font-mono text-[0.7rem] tracking-wider uppercase text-ink-secondary hover:text-accent transition-colors duration-150"
+            >
+              {['Home', 'Work', 'Poetry', 'Commonplace', 'About', 'Contact'][i]}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Column 3: Contact & social -->
+      <div class="md:text-right">
+        <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted mb-3">Connect</p>
+        <div class="flex flex-col gap-1">
+          <a href="mailto:karan@example.com" class="font-mono text-[0.7rem] text-ink-secondary hover:text-accent transition-colors duration-150">
+            karan@example.com
+          </a>
+          <a href="https://github.com/karangupta" target="_blank" rel="noopener" class="font-mono text-[0.7rem] text-ink-secondary hover:text-accent transition-colors duration-150">
+            GitHub
+          </a>
+          <a href="https://linkedin.com/in/karangupta" target="_blank" rel="noopener" class="font-mono text-[0.7rem] text-ink-secondary hover:text-accent transition-colors duration-150">
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="h-[1px] bg-accent dark:bg-night-accent"></div>
+
+  <div class="max-w-content mx-auto px-6 py-3 flex items-center justify-between">
+    <p class="font-mono text-[0.6rem] tracking-widest uppercase text-ink-muted">
+      © {year} Karan Gupta. All rights reserved.
+    </p>
+    <p class="font-mono text-[0.6rem] tracking-widest uppercase text-ink-muted">
+      Built with Astro · Tailwind · D3
+    </p>
+  </div>
+</footer>

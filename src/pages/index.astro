@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ui/ArticleCard.astro';
+import RuleHeading from '../components/ui/RuleHeading.astro';
+import PullQuote from '../components/ui/PullQuote.astro';
+import VideoCard from '../components/interactive/VideoCard.jsx';
+import { projects } from '../data/projects.js';
+
+const featuredProject = projects[3]; // SF Youth Poet Laureate
+const secondaryProjects = [projects[0], projects[1]]; // PlayKits, Neuroscape
+const videoProjects = projects.slice(0, 3);
+
+const commonplacePreviews = [
+  { quote: 'The test of a first-rate intelligence is the ability to hold two opposed ideas in the mind at the same time.', author: 'F. Scott Fitzgerald' },
+  { quote: 'Play is the highest form of research.', author: 'Albert Einstein' },
+  { quote: 'Attention is the rarest and purest form of generosity.', author: 'Simone Weil' },
+];
+---
+
+<BaseLayout title="Home" showTicker={true}>
+  <div class="max-w-content mx-auto px-6">
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 1: HERO GRID                                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="py-10" data-reveal>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+        <!-- Left: featured story — 7 cols -->
+        <div class="md:col-span-7 md:border-r md:border-rule md:pr-8">
+          <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">
+            Featured
+          </span>
+          <h2 class="font-display font-black text-[2rem] md:text-headline text-ink leading-[1.1] mb-4">
+            Appointed San Francisco's Youth Poet Laureate: A Year of Verse in Service of the City
+          </h2>
+          <p class="font-serif text-body text-ink-secondary leading-relaxed mb-6">
+            As SF Youth Poet Laureate 2024, I served as the city's literary ambassador —
+            reading at civic events, leading school workshops, and writing poems that hold
+            San Francisco's stories. The role brought together every strand of my work:
+            language as technology, community as practice, art as civic act.
+          </p>
+          <a
+            href="/work#sf-youth-poet-laureate"
+            class="font-mono text-[0.7rem] tracking-widest uppercase text-accent hover:text-accent-hover border-b border-accent pb-0.5 transition-colors duration-150"
+          >
+            Read More →
+          </a>
+
+          <div class="mt-8 pt-8 border-t border-rule">
+            <blockquote class="font-display text-subhead italic text-ink-secondary leading-[1.35]">
+              "A city is only as alive as the words its people use to name it."
+            </blockquote>
+          </div>
+        </div>
+
+        <!-- Right: two secondary stories — 5 cols -->
+        <div class="md:col-span-5 flex flex-col gap-6">
+          {secondaryProjects.map((project, i) => (
+            <div class={i === 0 ? 'pb-6 border-b border-rule' : ''}>
+              <ArticleCard
+                label={project.label}
+                headline={project.headline}
+                lede={project.lede}
+                href={`/work#${project.slug}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <hr class="border-rule mt-10" />
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 2: LATEST WORK                                -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section data-reveal>
+      <RuleHeading title="Latest Work" />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+        {videoProjects.map((project) => (
+          <VideoCard
+            client:load
+            label={project.label}
+            headline={project.headline}
+            lede={project.lede}
+            href={`/work#${project.slug}`}
+            videoUrl={project.videoUrl}
+            videoPlaceholder={project.videoPlaceholder}
+          />
+        ))}
+      </div>
+
+      <hr class="border-rule" />
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 3: POETRY DESK                                -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="my-0 py-10 bg-[#F2EFE8] dark:bg-night-paper -mx-6 px-6" data-reveal>
+      <div class="max-w-content mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+        <div>
+          <PullQuote
+            quote="I have learned to read my city by its absences — the laundromat that became a juice bar, the corner store where Mr. Kim's son used to let me run a tab in summer."
+            attribution="Cartography of Belonging, 2024"
+          />
+        </div>
+
+        <div>
+          <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">
+            The Poetry Desk
+          </span>
+          <h2 class="font-display font-black text-headline text-ink leading-[1.1] mb-4">
+            Language as Technology, Silence as Signal
+          </h2>
+          <p class="font-serif text-body text-ink-secondary leading-relaxed mb-4">
+            Five years of poems exploring displacement, belonging, attention, and what
+            it means to grow up between cultures in a city that is always becoming
+            something else.
+          </p>
+          <p class="font-serif text-body text-ink-secondary leading-relaxed mb-6">
+            Appointed SF Youth Poet Laureate by Mayor Daniel Lurie. Featured on KQED,
+            FOX News California, and the Super Bowl press conference. In partnership
+            with Youth Speaks and 826 Valencia.
+          </p>
+          <a
+            href="/poetry"
+            class="font-mono text-[0.7rem] tracking-widest uppercase text-accent hover:text-accent-hover border-b border-accent pb-0.5 transition-colors duration-150"
+          >
+            Enter the Poetry Archive →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 4: PRESS STRIP                                -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section data-reveal>
+      <RuleHeading title="As Seen In" />
+
+      <div class="text-center py-8 pb-10">
+        <p class="font-display italic text-subhead text-ink-muted leading-relaxed">
+          KQED
+          <span class="text-rule mx-4">·</span>
+          FOX News California
+          <span class="text-rule mx-4">·</span>
+          Super Bowl Press Conference
+          <span class="text-rule mx-4">·</span>
+          Youth Speaks
+          <span class="text-rule mx-4">·</span>
+          826 Valencia
+        </p>
+      </div>
+
+      <hr class="border-rule" />
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 5: AWARDS STRIP                               -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="bg-ink text-paper -mx-6 px-6 py-8 my-0" data-reveal>
+      <div class="max-w-content mx-auto">
+        <p class="font-mono text-[0.65rem] tracking-widest uppercase text-accent mb-4 text-center">
+          Recognition
+        </p>
+        <div class="overflow-x-auto">
+          <div class="flex gap-12 min-w-max mx-auto justify-center font-mono text-[0.7rem] tracking-widest uppercase text-paper/70 py-2">
+            <span>SF Youth Poet Laureate 2024</span>
+            <span class="text-accent">·</span>
+            <span>Davidson Fellows Finalist</span>
+            <span class="text-accent">·</span>
+            <span>UCSF Neuroscape Research Fellowship</span>
+            <span class="text-accent">·</span>
+            <span>PlayKits Community Impact Award</span>
+            <span class="text-accent">·</span>
+            <span>Youth Speaks Grand Slam Finalist</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 6: COMMONPLACE TEASER                         -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="bg-night text-night-ink -mx-6 px-6 py-12 my-0" data-reveal>
+      <div class="max-w-content mx-auto">
+        <div class="text-center mb-10">
+          <span class="font-mono text-[0.65rem] tracking-widest uppercase text-night-accent block mb-2">
+            The Commonplace Book
+          </span>
+          <h2 class="font-display font-black text-headline text-night-ink leading-[1.1] mb-3">
+            A Constellation of Ideas
+          </h2>
+          <p class="font-serif text-body text-night-ink/70 max-w-[55ch] mx-auto">
+            A living archive of quotes, annotations, and connections — the intellectual
+            compost pile that feeds everything else.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {commonplacePreviews.map((entry) => (
+            <div class="border border-night-ink/20 p-6 hover:border-night-accent/40 transition-colors duration-200">
+              <p class="font-display italic text-night-ink/80 text-[1rem] leading-[1.5] mb-4">
+                "{entry.quote}"
+              </p>
+              <p class="font-mono text-[0.65rem] tracking-wider uppercase text-night-accent">
+                — {entry.author}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div class="text-center">
+          <a
+            href="/commonplace"
+            class="font-mono text-[0.7rem] tracking-widest uppercase border border-night-accent text-night-accent hover:bg-night-accent hover:text-night transition-colors duration-200 px-6 py-3 inline-block"
+          >
+            Enter the Archive →
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scroll reveal script -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            // Stagger children with data-reveal
+            const children = entry.target.querySelectorAll('[data-child-reveal]');
+            children.forEach((child, i) => {
+              (child as HTMLElement).style.animationDelay = `${i * 0.1}s`;
+              child.classList.add('revealed');
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
+
+    document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+  </script>
+</BaseLayout>

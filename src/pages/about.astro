@@ -1,0 +1,152 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import PullQuote from '../components/ui/PullQuote.astro';
+import RuleHeading from '../components/ui/RuleHeading.astro';
+---
+
+<ArticleLayout title="About">
+
+  <header class="mb-10">
+    <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">
+      Profile
+    </span>
+    <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-3">
+      Karan Gupta
+    </h1>
+    <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted">
+      San Francisco, CA · Born 2006 · He/Him
+    </p>
+    <hr class="border-rule mt-6" />
+  </header>
+
+  <!-- Fact box (float right on desktop, inline on mobile) -->
+  <aside class="float-none w-full md:float-right md:w-[30%] md:ml-8 md:mb-4 mb-6 border border-rule p-5 bg-[#F2EFE8] dark:bg-night-paper">
+    <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-4">At a Glance</p>
+
+    <dl class="space-y-3 font-mono text-[0.7rem]">
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Current Role</dt>
+        <dd class="text-ink mt-0.5">SF Youth Poet Laureate 2024</dd>
+      </div>
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Research</dt>
+        <dd class="text-ink mt-0.5">UCSF Neuroscape Lab</dd>
+      </div>
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Engineering</dt>
+        <dd class="text-ink mt-0.5">Cardinal Robotics — Tech Lead</dd>
+      </div>
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Founded</dt>
+        <dd class="text-ink mt-0.5">PlayKits.org (2022)</dd>
+      </div>
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Education</dt>
+        <dd class="text-ink mt-0.5">San Francisco, CA</dd>
+      </div>
+      <div>
+        <dt class="tracking-wider uppercase text-ink-muted">Interests</dt>
+        <dd class="text-ink mt-0.5">Cognitive neuroscience, robotics, pedagogy, urban poetry</dd>
+      </div>
+    </dl>
+  </aside>
+
+  <!-- Profile essay -->
+  <div class="font-serif text-body text-ink-secondary leading-relaxed space-y-5">
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — Opening paragraph: introduce Karan as a person who
+      operates across disciplines that most people treat as separate — poetry, engineering,
+      neuroscience, nonprofit work. Set the tone: curious, grounded, specific. Avoid generic
+      "passionate about making a difference" language.]
+    </p>
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — On growing up in San Francisco: the specific textures
+      of the city, what it means to be a teenager here during a period of rapid transformation.
+      The particular combination of access and inequality. How place shapes a person's questions.]
+    </p>
+
+    <PullQuote
+      quote="I am interested in the questions that fall between disciplines — the ones that poetry can ask but engineering has to answer, or vice versa."
+      attribution="Karan Gupta"
+    />
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — On being a first-generation student navigating elite
+      institutions: what it costs, what it offers, what you learn about yourself in the gap
+      between where you came from and where you're going.]
+    </p>
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — On PlayKits specifically: why children who have
+      experienced trauma need play as a healing modality, what it looks like to design
+      a kit that meets a child where they are emotionally, and what you've learned about
+      resilience from the families and clinicians you partner with.]
+    </p>
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — On the Neuroscape research: what drew you to
+      cognitive neuroscience, how it connects to questions about attention and learning
+      that also appear in your poetry, the particular excitement of working at the
+      boundary of what is known.]
+    </p>
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — On poetry as practice: not as hobby or sideline
+      but as the primary technology for processing experience. What writing teaches you
+      about thinking. The relationship between revision in poetry and debugging in code.]
+    </p>
+
+    <p>
+      [PROFILE PARAGRAPH PLACEHOLDER — Closing paragraph: what you're working toward.
+      Not a five-year plan but a direction, a set of questions you want to spend your life
+      getting better at asking.]
+    </p>
+
+  </div>
+
+  <div class="clear-both"></div>
+
+  <RuleHeading title="Recognition" />
+
+  <ul class="font-serif text-body text-ink-secondary space-y-3 list-none">
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2024</span>
+      <span>San Francisco Youth Poet Laureate, appointed by Mayor Daniel Lurie</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2024</span>
+      <span>Featured on KQED and FOX News California as SF Youth Poet Laureate</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2024</span>
+      <span>Performed at Super Bowl press conference</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2024</span>
+      <span>Cardinal Robotics Tech Lead — deployed at Apple, Sutter Health, Cadence Design Systems, and Whole Foods</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2023</span>
+      <span>UCSF Neuroscape Undergraduate Research Fellowship</span>
+    </li>
+    <li class="flex items-start gap-3">
+      <span class="font-mono text-[0.65rem] tracking-wider uppercase text-accent mt-1.5 shrink-0">2022</span>
+      <span>PlayKits.org — play-based therapy kits for trauma-affected children; 500+ served</span>
+    </li>
+  </ul>
+
+  <RuleHeading title="Contact" />
+
+  <p class="font-serif text-body text-ink-secondary mb-4">
+    For press inquiries, collaboration proposals, speaking invitations, or workshop requests:
+  </p>
+  <a
+    href="/contact"
+    class="font-mono text-[0.7rem] tracking-widest uppercase text-accent hover:text-accent-hover border-b border-accent pb-0.5 transition-colors duration-150"
+  >
+    Open the Contact Form →
+  </a>
+
+</ArticleLayout>

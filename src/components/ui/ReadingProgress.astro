@@ -1,0 +1,11 @@
+---
+---
+<div id="reading-progress" class="fixed top-0 left-0 h-[2px] bg-accent z-[100] transition-none" style="width: 0%"></div>
+
+<script>
+  const el = document.getElementById('reading-progress');
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    if (el) el.style.width = pct + '%';
+  });
+</script>

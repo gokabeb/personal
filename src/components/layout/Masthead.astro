@@ -1,0 +1,29 @@
+---
+const startDate = new Date(2024, 0, 1);
+const now = new Date();
+const issue = (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth()) + 1;
+
+const formattedDate = now.toLocaleDateString('en-US', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<div class="h-[3px] w-full bg-accent dark:bg-night-accent"></div>
+
+<div class="py-8 text-center px-6">
+  <h1 class="font-display font-black text-ink leading-none mb-2">
+    <span class="block text-[1.5rem] md:text-[2rem] italic font-normal tracking-wider">The</span>
+    <span class="block text-[2.2rem] md:text-display">Karan Gupta</span>
+  </h1>
+  <p class="font-mono text-mono-sm tracking-[0.15em] uppercase text-ink-muted mt-3">
+    Poet · Researcher · Builder · Founder
+  </p>
+  <p class="font-mono text-[0.65rem] tracking-widest text-ink-muted mt-2 uppercase">
+    Vol. I &nbsp;·&nbsp; No. {issue} &nbsp;·&nbsp; {formattedDate} &nbsp;·&nbsp; San Francisco, CA
+  </p>
+</div>
+
+<hr class="border-rule mx-6" />

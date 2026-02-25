@@ -1,0 +1,12 @@
+---
+interface Props {
+  label: string;
+  color?: string;
+}
+
+const { label, color = 'accent' } = Astro.props;
+---
+
+<span class={`font-mono text-[0.65rem] tracking-[0.2em] uppercase text-${color}`}>
+  {label}
+</span>

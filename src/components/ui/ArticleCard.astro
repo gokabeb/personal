@@ -1,0 +1,40 @@
+---
+interface Props {
+  label?: string;
+  headline: string;
+  lede: string;
+  href: string;
+  imageUrl?: string;
+}
+
+const { label, headline, lede, href, imageUrl } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group block p-4 hover:bg-[#F0EDE6] dark:hover:bg-night-paper transition-colors duration-150"
+>
+  {imageUrl && (
+    <div class="aspect-[4/3] overflow-hidden mb-3 bg-rule">
+      <img
+        src={imageUrl}
+        alt={headline}
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+      />
+    </div>
+  )}
+
+  {label && (
+    <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-2">
+      {label}
+    </span>
+  )}
+
+  <h3 class="font-display font-bold text-subhead text-ink group-hover:underline decoration-accent underline-offset-4 decoration-2 leading-[1.2] mb-2">
+    {headline}
+  </h3>
+
+  <p class="font-serif text-caption text-ink-secondary leading-relaxed line-clamp-3">
+    {lede}
+  </p>
+</a>

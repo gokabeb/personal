@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RuleHeading from '../components/ui/RuleHeading.astro';
+import PullQuote from '../components/ui/PullQuote.astro';
+import AudioToggle from '../components/interactive/AudioToggle.jsx';
+import { poems } from '../data/placeholder-poems.js';
+import { commonplaceEntries } from '../data/placeholder-commonplace.js';
+
+const featuredEntries = commonplaceEntries.slice(0, 6);
+---
+
+<BaseLayout title="Poetry" showReadingProgress={true}>
+  <div class="max-w-content mx-auto px-6 py-10">
+
+    <div class="max-w-[75ch] mx-auto mb-10">
+      <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">
+        The Poetry Archive
+      </span>
+      <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-4">
+        Language as Technology, Silence as Signal
+      </h1>
+      <p class="font-serif text-body text-ink-secondary leading-relaxed">
+        Poems written across five years — about cities, displacement, attention, inheritance,
+        and the strange tenderness of being young in a world that is always changing.
+        SF Youth Poet Laureate 2024.
+      </p>
+    </div>
+
+    <!-- Audio toggle island -->
+    <div class="max-w-[75ch] mx-auto">
+      <AudioToggle client:load id="audio-toggle" />
+    </div>
+
+    <RuleHeading title="Poems" />
+
+    <!-- Poems list -->
+    <div id="poems-container" class="max-w-[75ch] mx-auto">
+      {poems.map((poem, poemIndex) => (
+        <article class="poem-entry mb-16 pb-16 border-b border-rule last:border-0">
+          <header class="mb-8">
+            <h2 class="font-display font-black text-subhead text-ink mb-1">
+              {poem.title}
+            </h2>
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted">
+              {poem.year} · Karan Gupta
+            </p>
+          </header>
+
+          <!-- Read mode: poem text -->
+          <div class="poem-text-view">
+            <div class="font-serif text-body leading-[2] text-ink">
+              {poem.lines.map((line) => (
+                line === '' ? <br /> : <p class="mb-0">{line}</p>
+              ))}
+            </div>
+          </div>
+
+          <!-- Listen mode: audio player (hidden by default) -->
+          <div class="poem-audio-view hidden">
+            {poem.audioUrl ? (
+              <div class="bg-[#F2EFE8] dark:bg-night-paper p-6 rounded-none">
+                <p class="font-mono text-[0.65rem] tracking-widest uppercase text-accent mb-4">
+                  Audio Recording
+                </p>
+                <audio controls class="w-full" src={poem.audioUrl}>
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            ) : (
+              <div class="bg-[#F2EFE8] dark:bg-night-paper p-6 border border-rule">
+                <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted text-center">
+                  Audio recording coming soon
+                </p>
+              </div>
+            )}
+
+            <!-- Also show poem text in listen mode -->
+            <div class="mt-8 font-serif text-body leading-[2] text-ink opacity-60">
+              {poem.lines.map((line) => (
+                line === '' ? <br /> : <p class="mb-0">{line}</p>
+              ))}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- COMMONPLACE EXCERPTS                                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <RuleHeading title="From the Commonplace Book" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[75ch] mx-auto mb-16">
+      {featuredEntries.map((entry) => (
+        <div class="border-l-2 border-rule pl-4 py-1">
+          <p class="font-display italic text-[1rem] text-ink-secondary leading-[1.6] mb-3">
+            "{entry.quote}"
+          </p>
+          <p class="font-mono text-[0.65rem] tracking-wider uppercase text-accent">
+            — {entry.sourceAuthor}, <em class="not-italic text-ink-muted">{entry.sourceWork}</em>
+          </p>
+          {entry.annotation && (
+            <p class="font-serif text-caption text-ink-muted mt-2 leading-relaxed">
+              {entry.annotation}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="text-center mb-10">
+      <a
+        href="/commonplace"
+        class="font-mono text-[0.7rem] tracking-widest uppercase text-accent hover:text-accent-hover border-b border-accent pb-0.5 transition-colors duration-150"
+      >
+        Explore the Full Commonplace Archive →
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Toggle listen/read mode -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      function applyMode(isListenMode: boolean) {
+        document.querySelectorAll('.poem-text-view').forEach((el) => {
+          (el as HTMLElement).style.display = isListenMode ? 'none' : 'block';
+        });
+        document.querySelectorAll('.poem-audio-view').forEach((el) => {
+          (el as HTMLElement).classList.toggle('hidden', !isListenMode);
+        });
+      }
+
+      // AudioToggle dispatches this custom event
+      document.addEventListener('audiomode:change', (e: any) => {
+        applyMode(e.detail);
+      });
+    });
+  </script>
+</BaseLayout>

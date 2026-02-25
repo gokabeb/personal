@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 — Page Not Found">
+  <div class="max-w-content mx-auto px-6 py-20 flex items-center justify-center min-h-[60vh]">
+    <div class="max-w-lg w-full border-2 border-ink p-10 text-center">
+
+      <!-- Newspaper correction notice styling -->
+      <div class="border-b-2 border-ink pb-4 mb-6">
+        <p class="font-mono text-[0.6rem] tracking-[0.25em] uppercase text-accent mb-1">
+          Correction
+        </p>
+        <h1 class="font-display font-black text-[3rem] text-ink leading-none">
+          404
+        </h1>
+      </div>
+
+      <p class="font-serif text-body text-ink-secondary leading-relaxed mb-6">
+        <strong class="font-display italic text-ink">An Editors' Note:</strong>
+        The page you have requested does not exist at this location.
+        We regret this navigational error and have dispatched a search party.
+        In the meantime, the following redirections may prove useful.
+      </p>
+
+      <p class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted mb-8">
+        The Karan Gupta · Issue Correction · Vol. I
+      </p>
+
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a
+          href="/"
+          class="font-mono text-[0.65rem] tracking-widest uppercase border border-ink px-4 py-2 text-ink hover:bg-ink hover:text-paper transition-colors duration-150"
+        >
+          ← Front Page
+        </a>
+        <a
+          href="/work"
+          class="font-mono text-[0.65rem] tracking-widest uppercase border border-rule px-4 py-2 text-ink-muted hover:border-ink hover:text-ink transition-colors duration-150"
+        >
+          Work
+        </a>
+        <a
+          href="/poetry"
+          class="font-mono text-[0.65rem] tracking-widest uppercase border border-rule px-4 py-2 text-ink-muted hover:border-ink hover:text-ink transition-colors duration-150"
+        >
+          Poetry
+        </a>
+        <a
+          href="/contact"
+          class="font-mono text-[0.65rem] tracking-widest uppercase border border-rule px-4 py-2 text-ink-muted hover:border-ink hover:text-ink transition-colors duration-150"
+        >
+          Contact
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
