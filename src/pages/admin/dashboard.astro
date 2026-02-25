@@ -1,0 +1,78 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getDb } from '../../lib/db';
+
+const db = getDb();
+
+const [{ data: articles }, { data: projects }, { data: poems }] = await Promise.all([
+  db.from('articles').select('id, title, published, created_at').order('created_at', { ascending: false }),
+  db.from('projects').select('id, title, published, created_at').order('created_at', { ascending: false }),
+  db.from('poems').select('id, title, published, created_at').order('created_at', { ascending: false }),
+]);
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<BaseLayout title="Admin — Dashboard">
+  <div class="max-w-content mx-auto px-6 py-10">
+
+    <div class="flex items-center justify-between mb-8 pb-4 border-b-2 border-ink">
+      <div>
+        <p class="font-mono text-[0.6rem] tracking-[0.25em] uppercase text-accent mb-1">Editorial</p>
+        <h1 class="font-display font-black text-subhead text-ink">Dashboard</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <a
+          href="/admin/new"
+          class="font-mono text-[0.65rem] tracking-widest uppercase bg-ink text-paper px-5 py-2.5 hover:bg-ink-secondary transition-colors duration-150"
+        >
+          + New
+        </a>
+        <form method="POST" action="/api/auth/logout">
+          <button
+            type="submit"
+            class="font-mono text-[0.65rem] tracking-widest uppercase border border-rule text-ink-muted px-4 py-2.5 hover:border-ink hover:text-ink transition-colors duration-150"
+          >
+            Log Out
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {[
+      { label: 'Articles', type: 'article', items: articles ?? [] },
+      { label: 'Projects', type: 'project', items: projects ?? [] },
+      { label: 'Poems', type: 'poem', items: poems ?? [] },
+    ].map(({ label, type, items }) => (
+      <section class="mb-10">
+        <h2 class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent mb-3">{label}</h2>
+
+        {items.length === 0 ? (
+          <p class="font-mono text-[0.65rem] text-ink-muted py-4">No {label.toLowerCase()} yet.</p>
+        ) : (
+          <div class="border border-rule divide-y divide-rule">
+            {items.map((item: any) => (
+              <div class="flex items-center gap-4 px-4 py-3">
+                <span class={`font-mono text-[0.55rem] tracking-widest uppercase px-1.5 py-0.5 ${item.published ? 'bg-ink text-paper' : 'border border-rule text-ink-muted'}`}>
+                  {item.published ? 'Live' : 'Draft'}
+                </span>
+                <span class="font-serif text-[0.95rem] text-ink flex-1">{item.title}</span>
+                <span class="font-mono text-[0.6rem] text-ink-muted">{formatDate(item.created_at)}</span>
+                <a
+                  href={`/admin/edit/${type}/${item.id}`}
+                  class="font-mono text-[0.6rem] tracking-wider uppercase text-accent hover:text-accent-hover transition-colors duration-150"
+                >
+                  Edit
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    ))}
+
+  </div>
+</BaseLayout>
