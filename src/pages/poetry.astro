@@ -3,7 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import RuleHeading from '../components/ui/RuleHeading.astro';
 import PullQuote from '../components/ui/PullQuote.astro';
 import AudioToggle from '../components/interactive/AudioToggle.jsx';
-import { poems } from '../data/placeholder-poems.js';
+import { getPublicDb } from '../lib/db';
+
+const db = getPublicDb();
+const { data: rawPoems = [] } = db
+  ? await db.from('poems').select('*').eq('published', true).order('created_at', { ascending: false })
+  : { data: [] };
+
+// Normalize: convert body string back to lines array for template compatibility
+const poems = (rawPoems ?? []).map(p => ({
+  ...p,
+  lines: p.body ? p.body.split('\n') : [],
+}));
 import { commonplaceEntries } from '../data/placeholder-commonplace.js';
 
 const featuredEntries = commonplaceEntries.slice(0, 6);
