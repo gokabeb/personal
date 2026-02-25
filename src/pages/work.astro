@@ -6,7 +6,21 @@ import Byline from '../components/ui/Byline.astro';
 import VideoCard from '../components/interactive/VideoCard.jsx';
 import TagFilter from '../components/interactive/TagFilter.jsx';
 import ProjectUpdateLog from '../components/interactive/ProjectUpdateLog.jsx';
-import { projects } from '../data/projects.js';
+import { getPublicDb } from '../lib/db';
+import { marked } from 'marked';
+
+const db = getPublicDb();
+const { data: rawProjects = [] } = db
+  ? await db.from('projects').select('*').eq('published', true).order('created_at', { ascending: false })
+  : { data: [] };
+
+// Normalize Supabase rows to match the shape the template already uses
+const projects = (rawProjects ?? []).map(p => ({
+  ...p,
+  bodyParagraphs: p.body ? p.body.split('\n\n').filter(Boolean) : [],
+  pullQuote: p.pull_quote,
+  updates: Array.isArray(p.updates) ? p.updates : [],
+}));
 ---
 
 <BaseLayout title="Work">
