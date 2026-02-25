@@ -1,0 +1,43 @@
+---
+export const prerender = false;
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ContentEditor from '../../../../components/admin/ContentEditor.jsx';
+import { getDb } from '../../../../lib/db';
+
+const { type, id } = Astro.params;
+const TABLES: Record<string, string> = { article: 'articles', project: 'projects', poem: 'poems' };
+const table = TABLES[type as string];
+
+if (!table) return Astro.redirect('/admin/dashboard');
+
+const db = getDb();
+const { data, error } = await db.from(table).select('*').eq('id', id).single();
+
+if (error || !data) return Astro.redirect('/admin/dashboard');
+
+// Normalize data for the editor
+const normalized = {
+  ...data,
+  tags: Array.isArray(data.tags) ? data.tags.join(', ') : '',
+};
+---
+
+<BaseLayout title={`Admin — Edit ${type}`}>
+  <div class="max-w-content mx-auto px-6 py-10">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-rule">
+      <div class="flex items-center gap-4">
+        <a href="/admin/dashboard" class="font-mono text-[0.6rem] tracking-wider uppercase text-ink-muted hover:text-ink transition-colors">
+          ← Dashboard
+        </a>
+        <h1 class="font-display font-black text-subhead text-ink">Edit {type}</h1>
+      </div>
+    </div>
+
+    <ContentEditor
+      client:load
+      initialType={type}
+      initialData={normalized}
+      editId={id}
+    />
+  </div>
+</BaseLayout>

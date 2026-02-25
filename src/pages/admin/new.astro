@@ -1,0 +1,20 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentEditor from '../../components/admin/ContentEditor.jsx';
+---
+
+<BaseLayout title="Admin — New Content">
+  <div class="max-w-content mx-auto px-6 py-10">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-rule">
+      <div class="flex items-center gap-4">
+        <a href="/admin/dashboard" class="font-mono text-[0.6rem] tracking-wider uppercase text-ink-muted hover:text-ink transition-colors">
+          ← Dashboard
+        </a>
+        <h1 class="font-display font-black text-subhead text-ink">New Content</h1>
+      </div>
+    </div>
+
+    <ContentEditor client:load />
+  </div>
+</BaseLayout>
