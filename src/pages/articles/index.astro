@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RuleHeading from '../../components/ui/RuleHeading.astro';
+import { getPublicDb } from '../../lib/db';
+
+const db = getPublicDb();
+const { data: articles = [] } = db
+  ? await db.from('articles').select('id, slug, title, lede, tags, published_at, created_at').eq('published', true).order('published_at', { ascending: false })
+  : { data: [] };
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+
+<BaseLayout title="Articles">
+  <div class="max-w-content mx-auto px-6 py-10">
+    <div class="mb-8">
+      <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">Essays & Dispatches</span>
+      <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-3">Articles</h1>
+      <p class="font-serif text-body text-ink-secondary max-w-[60ch]">
+        Writing at the intersection of technology, community, and language.
+      </p>
+    </div>
+
+    <RuleHeading title="All Articles" />
+
+    {(articles ?? []).length === 0 ? (
+      <p class="font-serif text-body text-ink-muted py-12 text-center">No articles published yet.</p>
+    ) : (
+      <div class="divide-y divide-rule">
+        {(articles ?? []).map((article: any) => (
+          <a href={`/articles/${article.slug}`} class="group block py-8 hover:bg-[#F0EDE6] dark:hover:bg-night-paper -mx-4 px-4 transition-colors duration-150">
+            <span class="font-mono text-[0.65rem] tracking-widest uppercase text-ink-muted block mb-2">
+              {formatDate(article.published_at ?? article.created_at)}
+            </span>
+            <h2 class="font-display font-bold text-subhead text-ink group-hover:underline decoration-accent underline-offset-4 decoration-2 leading-[1.2] mb-2">
+              {article.title}
+            </h2>
+            {article.lede && (
+              <p class="font-serif text-body text-ink-secondary leading-relaxed max-w-[70ch]">{article.lede}</p>
+            )}
+            {article.tags?.length > 0 && (
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                {article.tags.map((tag: string) => (
+                  <span class="font-mono text-[0.6rem] tracking-[0.15em] uppercase px-2 py-0.5 border border-rule text-ink-muted">{tag}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>
