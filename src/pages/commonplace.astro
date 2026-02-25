@@ -1,7 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CommonplaceBook from '../components/commonplace/CommonplaceBook.jsx';
-import { commonplaceEntries } from '../data/placeholder-commonplace.js';
+import { getPublicDb } from '../lib/db';
+
+const db = getPublicDb();
+const { data: rawEntries = [] } = db
+  ? await db.from('commonplace_entries')
+      .select('*')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+  : { data: [] };
+
+const entries = (rawEntries ?? []).map((e: any) => ({
+  id: e.id,
+  quote: e.quote,
+  sourceAuthor: e.source_author ?? '',
+  sourceWork: e.source_work ?? '',
+  sourceUrl: e.source_url ?? '',
+  sourceYear: e.source_year ?? null,
+  annotation: e.annotation ?? '',
+  tags: e.tags ?? [],
+  embedding: e.embedding ?? null,
+  posX: e.pos_x ?? null,
+  posY: e.pos_y ?? null,
+  posZ: e.pos_z ?? null,
+}));
 ---
 
 <BaseLayout title="Commonplace Book">
@@ -20,7 +43,7 @@ import { commonplaceEntries } from '../data/placeholder-commonplace.js';
         similarity; the constellation view visualizes those relationships.
       </p>
       <p class="font-mono text-[0.65rem] tracking-wider uppercase text-ink-muted">
-        {commonplaceEntries.length} entries · Toggle to constellation view to see connections
+        {entries.length} entries · Toggle to constellation view to see connections
       </p>
     </div>
 
@@ -29,7 +52,7 @@ import { commonplaceEntries } from '../data/placeholder-commonplace.js';
     <!-- CommonplaceBook React island: list + constellation views, modal, search -->
     <CommonplaceBook
       client:load
-      entries={commonplaceEntries}
+      entries={entries}
     />
 
   </div>

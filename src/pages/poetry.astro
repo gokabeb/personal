@@ -6,18 +6,31 @@ import AudioToggle from '../components/interactive/AudioToggle.jsx';
 import { getPublicDb } from '../lib/db';
 
 const db = getPublicDb();
-const { data: rawPoems = [] } = db
-  ? await db.from('poems').select('*').eq('published', true).order('created_at', { ascending: false })
-  : { data: [] };
+const [{ data: rawPoems = [] }, { data: siteRows }] = await Promise.all([
+  db ? db.from('poems').select('*').eq('published', true).order('created_at', { ascending: false }) : { data: [] },
+  db ? db.from('site_content').select('key, value') : { data: [] },
+]);
+const site: Record<string, string> = Object.fromEntries((siteRows ?? []).map((r: any) => [r.key, r.value]));
 
 // Normalize: convert body string back to lines array for template compatibility
 const poems = (rawPoems ?? []).map(p => ({
   ...p,
   lines: p.body ? p.body.split('\n') : [],
 }));
-import { commonplaceEntries } from '../data/placeholder-commonplace.js';
+const { data: rawCommonplace = [] } = db
+  ? await db.from('commonplace_entries')
+      .select('quote, source_author, source_work, annotation')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(6)
+  : { data: [] };
 
-const featuredEntries = commonplaceEntries.slice(0, 6);
+const featuredEntries = (rawCommonplace ?? []).map((e: any) => ({
+  quote: e.quote,
+  sourceAuthor: e.source_author ?? '',
+  sourceWork: e.source_work ?? '',
+  annotation: e.annotation ?? '',
+}));
 ---
 
 <BaseLayout title="Poetry" showReadingProgress={true}>
@@ -28,12 +41,10 @@ const featuredEntries = commonplaceEntries.slice(0, 6);
         The Poetry Archive
       </span>
       <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-4">
-        Language as Technology, Silence as Signal
+        {site.poetry_headline ?? 'Language as Technology, Silence as Signal'}
       </h1>
       <p class="font-serif text-body text-ink-secondary leading-relaxed">
-        Poems written across five years — about cities, displacement, attention, inheritance,
-        and the strange tenderness of being young in a world that is always changing.
-        SF Youth Poet Laureate 2024.
+        {site.poetry_description ?? ''}
       </p>
     </div>
 

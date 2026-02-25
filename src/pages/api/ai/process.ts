@@ -29,7 +29,30 @@ RULES:
 - label: pick ONE of: NONPROFIT, RESEARCH, ENGINEERING, COMMUNITY, WRITING.
 - tags: 3-6 lowercase topic keywords.
 Return JSON only: { "headline": string, "lede": string, "body": string, "pull_quote": string, "label": string, "tags": string[] }`,
+
+  commonplace: `You are a Digital Librarian and Curator.`,
 };
+
+const TYPE_TEMPERATURES: Record<string, number> = {
+  article: 0.2,
+  poem: 0.2,
+  project: 0.2,
+  commonplace: 0.3,
+};
+
+const COMMONPLACE_USER_PROMPT = (rawText: string) => `Parse the following raw text into a structured commonplace entry.
+
+RAW TEXT:
+${rawText}
+
+Return ONLY valid JSON:
+{
+  "quote": "verbatim quotation only, no surrounding quotes",
+  "source_author": "full name or empty string",
+  "source_work": "book/article/source title or empty string",
+  "annotation": "user's personal reflection separated from the quote, or empty string",
+  "tags": ["3-5 semantic/conceptual tags, not keyword matches"]
+}`;
 
 export const POST: APIRoute = async ({ request }) => {
   let body: { type?: string; rawText?: string };
@@ -42,7 +65,7 @@ export const POST: APIRoute = async ({ request }) => {
   const { type, rawText } = body;
 
   if (!type || !SYSTEM_PROMPTS[type]) {
-    return new Response(JSON.stringify({ error: 'type must be article, poem, or project' }), { status: 400 });
+    return new Response(JSON.stringify({ error: 'type must be article, poem, project, or commonplace' }), { status: 400 });
   }
   if (!rawText?.trim()) {
     return new Response(JSON.stringify({ error: 'rawText is required' }), { status: 400 });
@@ -55,14 +78,15 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const openai = new OpenAI({ apiKey });
+    const userContent = type === 'commonplace' ? COMMONPLACE_USER_PROMPT(rawText) : rawText;
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPTS[type] },
-        { role: 'user', content: rawText },
+        { role: 'user', content: userContent },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.2,
+      temperature: TYPE_TEMPERATURES[type] ?? 0.2,
     });
 
     const result = JSON.parse(completion.choices[0].message.content ?? '{}');

@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-// To load live data from Supabase, replace `entries` prop fetch with:
-// const { data } = await supabase.from('commonplace_entries').select('*');
 
 const TAG_COLORS = {
   grief: '#8B7355',
@@ -50,25 +48,24 @@ function getTagColor(tags) {
   return '#6A7A8A';
 }
 
-// Hardcoded similarity edges for placeholder data (would come from vector similarity in production)
-const SIMILARITY_EDGES = [
-  { source: 'cp-001', target: 'cp-007', similarity: 0.85 },
-  { source: 'cp-001', target: 'cp-014', similarity: 0.88 },
-  { source: 'cp-003', target: 'cp-006', similarity: 0.84 },
-  { source: 'cp-003', target: 'cp-016', similarity: 0.92 },
-  { source: 'cp-004', target: 'cp-009', similarity: 0.83 },
-  { source: 'cp-004', target: 'cp-015', similarity: 0.86 },
-  { source: 'cp-005', target: 'cp-013', similarity: 0.84 },
-  { source: 'cp-007', target: 'cp-014', similarity: 0.91 },
-  { source: 'cp-008', target: 'cp-010', similarity: 0.89 },
-  { source: 'cp-009', target: 'cp-014', similarity: 0.87 },
-  { source: 'cp-010', target: 'cp-016', similarity: 0.83 },
-  { source: 'cp-011', target: 'cp-012', similarity: 0.84 },
-  { source: 'cp-013', target: 'cp-003', similarity: 0.85 },
-  { source: 'cp-015', target: 'cp-012', similarity: 0.83 },
-  { source: 'cp-002', target: 'cp-011', similarity: 0.84 },
-  { source: 'cp-006', target: 'cp-013', similarity: 0.86 },
-];
+function computeEdges(entries) {
+  const links = [];
+  for (let i = 0; i < entries.length; i++) {
+    for (let j = i + 1; j < entries.length; j++) {
+      const tagsA = entries[i].tags ?? [];
+      const tagsB = entries[j].tags ?? [];
+      const shared = tagsA.filter(t => tagsB.includes(t));
+      if (shared.length === 0) continue;
+      const union = new Set([...tagsA, ...tagsB]).size;
+      links.push({
+        source: entries[i].id,
+        target: entries[j].id,
+        similarity: shared.length / union,  // Jaccard: 0–1
+      });
+    }
+  }
+  return links;
+}
 
 export default function ConstellationCanvas({ entries = [], onSelectEntry, searchQuery = '' }) {
   const svgRef = useRef(null);
@@ -83,10 +80,13 @@ export default function ConstellationCanvas({ entries = [], onSelectEntry, searc
     const width = containerRef.current.clientWidth || 800;
     const height = containerRef.current.clientHeight || 600;
 
+    // Compute tag-based Jaccard similarity edges
+    const allEdges = computeEdges(entries);
+
     // Count connections per node
     const connectionCount = {};
     entries.forEach(e => { connectionCount[e.id] = 0; });
-    SIMILARITY_EDGES.forEach(edge => {
+    allEdges.forEach(edge => {
       if (connectionCount[edge.source] !== undefined) connectionCount[edge.source]++;
       if (connectionCount[edge.target] !== undefined) connectionCount[edge.target]++;
     });
@@ -97,9 +97,7 @@ export default function ConstellationCanvas({ entries = [], onSelectEntry, searc
       color: getTagColor(e.tags),
     }));
 
-    const links = SIMILARITY_EDGES
-      .filter(e => e.similarity > 0.82)
-      .map(e => ({ ...e }));
+    const links = allEdges.map(e => ({ ...e }));
 
     const svg = d3.select(svgRef.current)
       .attr('width', width)
@@ -121,7 +119,8 @@ export default function ConstellationCanvas({ entries = [], onSelectEntry, searc
       .selectAll('line')
       .data(links)
       .join('line')
-      .attr('stroke', 'rgba(255,255,255,0.1)')
+      .attr('stroke', 'rgba(255,255,255,1)')
+      .attr('stroke-opacity', d => 0.05 + d.similarity * 0.25)
       .attr('stroke-width', 1);
 
     // Nodes

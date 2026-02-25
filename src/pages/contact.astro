@@ -1,6 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RuleHeading from '../components/ui/RuleHeading.astro';
+import { getPublicDb } from '../lib/db';
+
+const db = getPublicDb();
+const { data: siteRows } = db ? await db.from('site_content').select('key, value') : { data: [] };
+const site: Record<string, string> = Object.fromEntries((siteRows ?? []).map((r: any) => [r.key, r.value]));
+
+const classifiedItems = (site.contact_classifieds ?? '').split('\n').filter(Boolean).map((line: string) => {
+  const idx = line.indexOf(':');
+  return idx > -1 ? { label: line.slice(0, idx).trim(), text: line.slice(idx + 1).trim() } : null;
+}).filter(Boolean);
 ---
 
 <BaseLayout title="Contact">
@@ -14,8 +24,7 @@ import RuleHeading from '../components/ui/RuleHeading.astro';
         Contact
       </h1>
       <p class="font-serif text-body text-ink-secondary leading-relaxed mb-8">
-        For press inquiries, collaboration proposals, speaking invitations, workshop
-        requests, or simply to say hello.
+        {site.contact_intro ?? 'For press inquiries, collaboration proposals, speaking invitations, workshop requests, or simply to say hello.'}
       </p>
 
       <!-- Contact form via Formspree -->
@@ -98,22 +107,31 @@ import RuleHeading from '../components/ui/RuleHeading.astro';
     <RuleHeading title="Classifieds" />
 
     <div class="columns-1 md:columns-2 gap-8 font-mono text-[0.7rem] leading-relaxed text-ink-secondary max-w-[65ch] mx-auto">
-      <div class="break-inside-avoid mb-6">
-        <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">SEEKING</p>
-        <p>Collaborators for a research project exploring the intersection of poetic meter and neural oscillation. Must be comfortable with both LaTeX and line breaks.</p>
-      </div>
-      <div class="break-inside-avoid mb-6">
-        <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">OFFERING</p>
-        <p>Workshop: "Debugging Your Draft" — a two-hour session applying engineering debugging principles to poetry revision. Available for schools and writing groups.</p>
-      </div>
-      <div class="break-inside-avoid mb-6">
-        <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">AVAILABLE</p>
-        <p>Guest lectures on attention economics, educational technology ethics, or slam poetry as civic practice. Remote or in-person, Bay Area preferred.</p>
-      </div>
-      <div class="break-inside-avoid mb-6">
-        <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">NOTICE</p>
-        <p>Response time: 3–5 business days. All emails answered personally. No form letters. No PR representation. Direct line only.</p>
-      </div>
+      {classifiedItems.length > 0 ? classifiedItems.map((item: any) => (
+        <div class="break-inside-avoid mb-6">
+          <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">{item.label}</p>
+          <p>{item.text}</p>
+        </div>
+      )) : (
+        <>
+          <div class="break-inside-avoid mb-6">
+            <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">SEEKING</p>
+            <p>Collaborators for a research project exploring the intersection of poetic meter and neural oscillation. Must be comfortable with both LaTeX and line breaks.</p>
+          </div>
+          <div class="break-inside-avoid mb-6">
+            <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">OFFERING</p>
+            <p>Workshop: "Debugging Your Draft" — a two-hour session applying engineering debugging principles to poetry revision. Available for schools and writing groups.</p>
+          </div>
+          <div class="break-inside-avoid mb-6">
+            <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">AVAILABLE</p>
+            <p>Guest lectures on attention economics, educational technology ethics, or slam poetry as civic practice. Remote or in-person, Bay Area preferred.</p>
+          </div>
+          <div class="break-inside-avoid mb-6">
+            <p class="font-mono text-[0.6rem] tracking-widest uppercase text-accent mb-1">NOTICE</p>
+            <p>Response time: 3–5 business days. All emails answered personally. No form letters. No PR representation. Direct line only.</p>
+          </div>
+        </>
+      )}
     </div>
 
   </div>

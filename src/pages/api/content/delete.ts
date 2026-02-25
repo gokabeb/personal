@@ -4,7 +4,7 @@ import { verifySession } from '../../../lib/auth';
 
 export const prerender = false;
 
-const TABLES = { article: 'articles', project: 'projects', poem: 'poems' } as const;
+const TABLES = { article: 'articles', project: 'projects', poem: 'poems', commonplace: 'commonplace_entries' } as const;
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   const cookie = cookies.get('admin-session')?.value ?? '';

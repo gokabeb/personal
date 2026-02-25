@@ -73,6 +73,16 @@ export default function EntryModal({ entry, onClose }) {
                 {entry.sourceWork}{entry.sourceYear ? `, ${entry.sourceYear}` : ''}
               </p>
             )}
+            {entry.sourceUrl && (
+              <a
+                href={entry.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[0.6rem] tracking-widest uppercase text-accent hover:text-accent-hover border-b border-accent pb-0.5 transition-colors duration-150 block mt-2"
+              >
+                View Source →
+              </a>
+            )}
           </div>
 
           {/* Annotation */}

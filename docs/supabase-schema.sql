@@ -27,6 +27,7 @@ CREATE TABLE projects (
   pull_quote    text,
   updates       jsonb DEFAULT '[]',
   video_url     text,
+  tags          text[] DEFAULT '{}',
   published     boolean DEFAULT false,
   created_at    timestamptz DEFAULT now()
 );
@@ -53,3 +54,28 @@ CREATE POLICY "public read published articles" ON articles FOR SELECT USING (pub
 CREATE POLICY "public read published projects" ON projects FOR SELECT USING (published = true);
 CREATE POLICY "public read published poems"    ON poems    FOR SELECT USING (published = true);
 -- Note: service role key bypasses RLS — used by admin panel for writes and reading drafts
+
+-- Commonplace entries (replaces src/data/placeholder-commonplace.js)
+CREATE TABLE IF NOT EXISTS commonplace_entries (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  legacy_id     text UNIQUE,          -- for idempotent seed ('cp-001' etc.)
+  quote         text NOT NULL,
+  source_author text,
+  source_work   text,
+  source_url    text,
+  source_year   integer,
+  annotation    text,
+  tags          text[] DEFAULT '{}',
+  published     boolean DEFAULT false,
+  created_at    timestamptz DEFAULT now()
+);
+
+ALTER TABLE commonplace_entries ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can read published commonplace"
+  ON commonplace_entries FOR SELECT
+  USING (published = true);
+
+-- Enable pgvector and add semantic embedding column
+CREATE EXTENSION IF NOT EXISTS vector;
+ALTER TABLE commonplace_entries ADD COLUMN IF NOT EXISTS embedding vector(1536);

@@ -4,9 +4,11 @@ import RuleHeading from '../../components/ui/RuleHeading.astro';
 import { getPublicDb } from '../../lib/db';
 
 const db = getPublicDb();
-const { data: articles = [] } = db
-  ? await db.from('articles').select('id, slug, title, lede, tags, published_at, created_at').eq('published', true).order('published_at', { ascending: false })
-  : { data: [] };
+const [{ data: articles = [] }, { data: siteRows }] = await Promise.all([
+  db ? db.from('articles').select('id, slug, title, lede, tags, published_at, created_at').eq('published', true).order('published_at', { ascending: false }) : { data: [] },
+  db ? db.from('site_content').select('key, value') : { data: [] },
+]);
+const site: Record<string, string> = Object.fromEntries((siteRows ?? []).map((r: any) => [r.key, r.value]));
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -19,7 +21,7 @@ function formatDate(iso: string) {
       <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-accent block mb-3">Essays & Dispatches</span>
       <h1 class="font-display font-black text-headline text-ink leading-[1.1] mb-3">Articles</h1>
       <p class="font-serif text-body text-ink-secondary max-w-[60ch]">
-        Writing at the intersection of technology, community, and language.
+        {site.articles_description ?? 'Writing at the intersection of technology, community, and language.'}
       </p>
     </div>
 

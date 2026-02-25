@@ -1,0 +1,28 @@
+---
+export const prerender = false;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteContentEditor from '../../components/admin/SiteContentEditor.jsx';
+import { getDb } from '../../lib/db';
+
+const db = getDb();
+const { data: rows } = await db.from('site_content').select('key, value');
+const initialContent = Object.fromEntries((rows ?? []).map((r: any) => [r.key, r.value]));
+---
+
+<BaseLayout title="Admin — Site Content">
+  <div class="max-w-content mx-auto px-6 py-10">
+
+    <div class="flex items-center gap-4 mb-8 pb-4 border-b-2 border-ink">
+      <a href="/admin/dashboard" class="font-mono text-[0.6rem] tracking-wider uppercase text-ink-muted hover:text-ink transition-colors">
+        ← Dashboard
+      </a>
+      <div>
+        <p class="font-mono text-[0.6rem] tracking-[0.25em] uppercase text-accent mb-0.5">Editorial</p>
+        <h1 class="font-display font-black text-subhead text-ink">Site Content</h1>
+      </div>
+    </div>
+
+    <SiteContentEditor client:load initialContent={initialContent} />
+
+  </div>
+</BaseLayout>

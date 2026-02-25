@@ -5,7 +5,7 @@ import ContentEditor from '../../../../components/admin/ContentEditor.jsx';
 import { getDb } from '../../../../lib/db';
 
 const { type, id } = Astro.params;
-const TABLES: Record<string, string> = { article: 'articles', project: 'projects', poem: 'poems' };
+const TABLES: Record<string, string> = { article: 'articles', project: 'projects', poem: 'poems', commonplace: 'commonplace_entries' };
 const table = TABLES[type as string];
 
 if (!table) return Astro.redirect('/admin/dashboard');
@@ -15,10 +15,11 @@ const { data, error } = await db.from(table).select('*').eq('id', id).single();
 
 if (error || !data) return Astro.redirect('/admin/dashboard');
 
-// Normalize data for the editor
+// Normalize data for the editor — strip computed/heavy fields not shown in the form
+const { embedding, pos_x, pos_y, pos_z, legacy_id, ...editableData } = data as any;
 const normalized = {
-  ...data,
-  tags: Array.isArray(data.tags) ? data.tags.join(', ') : '',
+  ...editableData,
+  tags: Array.isArray(editableData.tags) ? editableData.tags.join(', ') : '',
 };
 ---
 

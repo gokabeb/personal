@@ -10,9 +10,11 @@ import { getPublicDb } from '../lib/db';
 import { marked } from 'marked';
 
 const db = getPublicDb();
-const { data: rawProjects = [] } = db
-  ? await db.from('projects').select('*').eq('published', true).order('created_at', { ascending: false })
-  : { data: [] };
+const [{ data: rawProjects = [] }, { data: siteRows }] = await Promise.all([
+  db ? db.from('projects').select('*').eq('published', true).order('created_at', { ascending: false }) : { data: [] },
+  db ? db.from('site_content').select('key, value') : { data: [] },
+]);
+const site: Record<string, string> = Object.fromEntries((siteRows ?? []).map((r: any) => [r.key, r.value]));
 
 // Normalize Supabase rows to match the shape the template already uses
 const projects = (rawProjects ?? []).map(p => ({
@@ -31,8 +33,7 @@ const projects = (rawProjects ?? []).map(p => ({
         Work
       </h1>
       <p class="font-serif text-body text-ink-secondary max-w-[60ch]">
-        Projects at the intersection of technology, community, and language —
-        from nonprofit engineering to neuroscience research to civic poetry.
+        {site.work_description ?? 'Projects at the intersection of technology, community, and language.'}
       </p>
     </div>
 

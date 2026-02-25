@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { marked } from 'marked';
 
-const TYPE_LABELS = { article: 'Article', project: 'Project', poem: 'Poem' };
+const TYPE_LABELS = { article: 'Article', project: 'Project', poem: 'Poem', commonplace: 'Commonplace Entry' };
 
 const TYPE_PROMPTS = {
-  article: "Just write. Don't worry about formatting, titles, or structure — pour it all out.",
-  project: "Describe the project. What is it, what did you do, why does it matter? Don't worry about structure.",
-  poem:    "Write your poem. Line breaks will be preserved exactly as you write them.",
+  article:     "Just write. Don't worry about formatting, titles, or structure — pour it all out.",
+  project:     "Describe the project. What is it, what did you do, why does it matter? Don't worry about structure.",
+  poem:        "Write your poem. Line breaks will be preserved exactly as you write them.",
+  commonplace: "Paste the quote, source, and any personal annotation. The AI will separate them for you.",
 };
 
 const EMPTY_FORM = {
-  article: { title: '', lede: '', body: '', pull_quote: '', tags: '' },
-  project: { headline: '', lede: '', body: '', pull_quote: '', label: 'WRITING', tags: '' },
-  poem:    { title: '', body: '', tags: '', year: new Date().getFullYear() },
+  article:    { title: '', lede: '', body: '', pull_quote: '', tags: '', prominence: 'standard' },
+  project:    { headline: '', lede: '', body: '', pull_quote: '', label: 'WRITING', tags: '', prominence: 'standard' },
+  poem:       { title: '', body: '', tags: '', year: new Date().getFullYear() },
+  commonplace: { quote: '', source_author: '', source_work: '', source_url: '', annotation: '', tags: '' },
 };
+
+const PROMINENCE_OPTIONS = [
+  { value: 'standard', label: 'Standard', desc: 'Grid / below the fold' },
+  { value: 'secondary', label: 'Secondary', desc: 'Right sidebar on homepage' },
+  { value: 'hero', label: 'Hero', desc: 'Big feature — top of homepage' },
+];
 
 export default function ContentEditor({ initialType = null, initialData = null, editId = null }) {
   const [step, setStep] = useState(initialType ? (initialData ? 3 : 2) : 1);
@@ -43,11 +51,22 @@ export default function ContentEditor({ initialType = null, initialData = null, 
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setForm({
-        ...EMPTY_FORM[type],
-        ...data,
-        tags: Array.isArray(data.tags) ? data.tags.join(', ') : (data.tags ?? ''),
-      });
+      if (type === 'commonplace') {
+        setForm({
+          ...EMPTY_FORM.commonplace,
+          quote:        data.quote ?? '',
+          source_author: data.source_author ?? '',
+          source_work:   data.source_work ?? '',
+          annotation:   data.annotation ?? '',
+          tags: Array.isArray(data.tags) ? data.tags.join(', ') : (data.tags ?? ''),
+        });
+      } else {
+        setForm({
+          ...EMPTY_FORM[type],
+          ...data,
+          tags: Array.isArray(data.tags) ? data.tags.join(', ') : (data.tags ?? ''),
+        });
+      }
       setStep(3);
     } catch (e) {
       setErrorMsg('AI processing failed. You can fill in the fields manually below.');
@@ -72,7 +91,9 @@ export default function ContentEditor({ initialType = null, initialData = null, 
     setStatus(null);
     try {
       const tags = form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
-      const data = { ...form, tags, slug: slugify(form.title || form.headline || '') };
+      const data = type === 'commonplace'
+        ? { ...form, tags }
+        : { ...form, tags, slug: slugify(form.title || form.headline || '') };
 
       const res = await fetch('/api/content/publish', {
         method: 'POST',
@@ -112,7 +133,7 @@ export default function ContentEditor({ initialType = null, initialData = null, 
             What are you creating?
           </p>
           <div className="flex flex-wrap gap-3">
-            {['article', 'project', 'poem'].map(t => (
+            {['article', 'project', 'poem', 'commonplace'].map(t => (
               <button
                 key={t}
                 onClick={() => handleTypeSelect(t)}
@@ -181,88 +202,142 @@ export default function ContentEditor({ initialType = null, initialData = null, 
 
             {/* Left: form fields */}
             <div className="space-y-4">
-              {/* Title / Headline */}
-              <div>
-                <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">
-                  {type === 'project' ? 'Headline' : 'Title'}
-                </label>
-                <input
-                  type="text"
-                  value={form.headline ?? form.title ?? ''}
-                  onChange={e => handleFormChange(type === 'project' ? 'headline' : 'title', e.target.value)}
-                  className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
-                />
-              </div>
 
-              {/* Lede (not for poems) */}
-              {type !== 'poem' && (
+              {/* ── Commonplace fields ── */}
+              {type === 'commonplace' && (<>
                 <div>
-                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Lede</label>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Quote</label>
                   <textarea
-                    value={form.lede ?? ''}
-                    onChange={e => handleFormChange('lede', e.target.value)}
-                    rows={2}
+                    value={form.quote ?? ''}
+                    onChange={e => handleFormChange('quote', e.target.value)}
+                    rows={6}
                     className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink"
                   />
                 </div>
-              )}
-
-              {/* Body */}
-              <div>
-                <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">
-                  Body {type !== 'poem' && '(markdown supported)'}
-                </label>
-                <textarea
-                  value={form.body ?? ''}
-                  onChange={e => handleFormChange('body', e.target.value)}
-                  rows={type === 'poem' ? 16 : 10}
-                  className="w-full font-mono text-[0.8rem] bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink leading-relaxed"
-                />
-              </div>
-
-              {/* Pull quote (not for poems) */}
-              {type !== 'poem' && (
                 <div>
-                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Pull Quote</label>
-                  <textarea
-                    value={form.pull_quote ?? ''}
-                    onChange={e => handleFormChange('pull_quote', e.target.value)}
-                    rows={2}
-                    className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink"
-                  />
-                </div>
-              )}
-
-              {/* Label (projects only) */}
-              {type === 'project' && (
-                <div>
-                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Category</label>
-                  <select
-                    value={form.label ?? 'WRITING'}
-                    onChange={e => { handleFormChange('label', e.target.value); handleFormChange('category', e.target.value); }}
-                    className="w-full font-mono text-[0.8rem] bg-paper dark:bg-night border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
-                  >
-                    {['NONPROFIT','RESEARCH','ENGINEERING','COMMUNITY','WRITING'].map(l => (
-                      <option key={l} value={l}>{l}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Year (poems only) */}
-              {type === 'poem' && (
-                <div>
-                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Year</label>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Source Author</label>
                   <input
-                    type="number"
-                    value={form.year ?? ''}
-                    onChange={e => handleFormChange('year', parseInt(e.target.value))}
+                    type="text"
+                    value={form.source_author ?? ''}
+                    onChange={e => handleFormChange('source_author', e.target.value)}
                     className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
                   />
                 </div>
-              )}
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Source Work</label>
+                  <input
+                    type="text"
+                    value={form.source_work ?? ''}
+                    onChange={e => handleFormChange('source_work', e.target.value)}
+                    className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Source URL</label>
+                  <input
+                    type="url"
+                    value={form.source_url ?? ''}
+                    onChange={e => handleFormChange('source_url', e.target.value)}
+                    placeholder="https://"
+                    className="w-full font-mono text-[0.8rem] bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Annotation</label>
+                  <textarea
+                    value={form.annotation ?? ''}
+                    onChange={e => handleFormChange('annotation', e.target.value)}
+                    rows={4}
+                    className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink"
+                  />
+                </div>
+              </>)}
 
-              {/* Tags */}
+              {/* ── Standard fields (non-commonplace) ── */}
+              {type !== 'commonplace' && (<>
+                {/* Title / Headline */}
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">
+                    {type === 'project' ? 'Headline' : 'Title'}
+                  </label>
+                  <input
+                    type="text"
+                    value={form.headline ?? form.title ?? ''}
+                    onChange={e => handleFormChange(type === 'project' ? 'headline' : 'title', e.target.value)}
+                    className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
+                  />
+                </div>
+
+                {/* Lede (not for poems) */}
+                {type !== 'poem' && (
+                  <div>
+                    <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Lede</label>
+                    <textarea
+                      value={form.lede ?? ''}
+                      onChange={e => handleFormChange('lede', e.target.value)}
+                      rows={2}
+                      className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink"
+                    />
+                  </div>
+                )}
+
+                {/* Body */}
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">
+                    Body {type !== 'poem' && '(markdown supported)'}
+                  </label>
+                  <textarea
+                    value={form.body ?? ''}
+                    onChange={e => handleFormChange('body', e.target.value)}
+                    rows={type === 'poem' ? 16 : 10}
+                    className="w-full font-mono text-[0.8rem] bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink leading-relaxed"
+                  />
+                </div>
+
+                {/* Pull quote (not for poems) */}
+                {type !== 'poem' && (
+                  <div>
+                    <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Pull Quote</label>
+                    <textarea
+                      value={form.pull_quote ?? ''}
+                      onChange={e => handleFormChange('pull_quote', e.target.value)}
+                      rows={2}
+                      className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none resize-y text-ink"
+                    />
+                  </div>
+                )}
+
+                {/* Label (projects only) */}
+                {type === 'project' && (
+                  <div>
+                    <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Category</label>
+                    <select
+                      value={form.label ?? 'WRITING'}
+                      onChange={e => { handleFormChange('label', e.target.value); handleFormChange('category', e.target.value); }}
+                      className="w-full font-mono text-[0.8rem] bg-paper dark:bg-night border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
+                    >
+                      {['NONPROFIT','RESEARCH','ENGINEERING','COMMUNITY','WRITING'].map(l => (
+                        <option key={l} value={l}>{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Year (poems only) */}
+                {type === 'poem' && (
+                  <div>
+                    <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">Year</label>
+                    <input
+                      type="number"
+                      value={form.year ?? ''}
+                      onChange={e => handleFormChange('year', parseInt(e.target.value))}
+                      className="w-full font-serif text-body bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
+                    />
+                  </div>
+                )}
+              </>)}
+
+              {/* Tags (all types) */}
               <div>
                 <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-1">
                   Tags <span className="normal-case tracking-normal">(comma-separated)</span>
@@ -275,6 +350,32 @@ export default function ContentEditor({ initialType = null, initialData = null, 
                   className="w-full font-mono text-[0.8rem] bg-transparent border border-rule focus:border-ink px-3 py-2 outline-none rounded-none text-ink"
                 />
               </div>
+
+              {/* Placement (articles + projects only) */}
+              {type !== 'poem' && type !== 'commonplace' && (
+                <div>
+                  <label className="block font-mono text-[0.6rem] tracking-[0.15em] uppercase text-ink-muted mb-2">
+                    Placement
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {PROMINENCE_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => handleFormChange('prominence', opt.value)}
+                        className={`flex items-center gap-3 px-3 py-2.5 border text-left transition-colors duration-150 ${
+                          (form.prominence ?? 'standard') === opt.value
+                            ? 'border-ink bg-ink text-paper'
+                            : 'border-rule text-ink hover:border-ink'
+                        }`}
+                      >
+                        <span className="font-mono text-[0.65rem] tracking-widest uppercase w-20">{opt.label}</span>
+                        <span className="font-serif text-[0.8rem] opacity-70">{opt.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Action buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -329,6 +430,40 @@ export default function ContentEditor({ initialType = null, initialData = null, 
 
 function ContentPreview({ type, form }) {
   if (!form) return null;
+
+  if (type === 'commonplace') {
+    return (
+      <div>
+        <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--accent)', display: 'block', marginBottom: '1rem' }}>
+          Commonplace Entry
+        </span>
+        {form.quote && (
+          <blockquote style={{ borderLeft: '4px solid var(--accent)', paddingLeft: '1.25rem', margin: '0 0 1rem', fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '1.2rem', color: 'var(--ink)', lineHeight: 1.5 }}>
+            "{form.quote}"
+          </blockquote>
+        )}
+        {(form.source_author || form.source_work) && (
+          <p style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '0.65rem', letterSpacing: '0.1em', color: 'var(--ink-muted)', marginBottom: '0.75rem' }}>
+            — {form.source_author}{form.source_work ? `, ${form.source_work}` : ''}
+          </p>
+        )}
+        {form.annotation && (
+          <p style={{ fontFamily: 'Source Serif 4, serif', fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--ink-secondary)' }}>
+            {form.annotation}
+          </p>
+        )}
+        {form.tags && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginTop: '1rem' }}>
+            {form.tags.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+              <span key={tag} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', border: '1px solid var(--rule)', padding: '0.2rem 0.5rem', color: 'var(--ink-muted)' }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const titleText = form.headline ?? form.title ?? '';
   const bodyHtml = form.body
