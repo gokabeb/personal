@@ -1,12 +1,11 @@
 import { config, collection, singleton, fields } from '@keystatic/core';
 
-// Local files while developing; GitHub once the site is deployed and the
-// PUBLIC_KEYSTATIC_GITHUB_APP_SLUG variable is set.
+// Where edits are saved. On this computer they are plain files. On the live
+// site (and during the one-time GitHub setup) the PUBLIC_KEYSTATIC_REPO
+// setting switches it to saving into the GitHub repository, which is what
+// makes the site rebuild after every save.
 const repo = import.meta.env.PUBLIC_KEYSTATIC_REPO as `${string}/${string}` | undefined;
-const storage =
-  import.meta.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG && repo
-    ? ({ kind: 'github', repo } as const)
-    : ({ kind: 'local' } as const);
+const storage = repo ? ({ kind: 'github', repo } as const) : ({ kind: 'local' } as const);
 
 export default config({
   storage,
