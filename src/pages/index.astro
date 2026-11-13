@@ -1,14 +1,11 @@
 ---
-// Placeholder while the new site is being built.
+import { getEntry, render } from 'astro:content';
+import Page from '../layouts/Page.astro';
+
+const letter = await getEntry('letter', 'index');
+const { Content } = letter ? await render(letter) : { Content: null };
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Karan Gupta</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  </head>
-  <body></body>
-</html>
+<Page title="Karan Gupta">
+  <div class="letter">{Content && <Content />}</div>
+</Page>

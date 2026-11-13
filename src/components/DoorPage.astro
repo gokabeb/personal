@@ -1,0 +1,19 @@
+---
+import Page from '../layouts/Page.astro';
+import BackLink from './BackLink.astro';
+import { titleFor } from '../lib/site';
+import type { DoorSlug } from '../lib/doors';
+
+interface Props {
+  slug: DoorSlug;
+}
+const { slug } = Astro.props;
+const title = await titleFor(slug);
+---
+
+<Page title={`${title} · Karan Gupta`}>
+  <p class="back-row"><BackLink /></p>
+  <h1 class="door-title" data-door={slug} transition:name={`door-${slug}`}>{title}</h1>
+  <slot />
+  <p class="back-row back-row--end"><BackLink /></p>
+</Page>

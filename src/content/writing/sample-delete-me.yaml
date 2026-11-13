@@ -1,0 +1,13 @@
+title: Sample (delete me)
+date: 2026-11-11
+kind: poem
+blurb: A placeholder so the poem layout can be checked. Not a real poem.
+published: false
+text: |-
+  This is a placeholder line.
+  This is a second placeholder line.
+      This line starts with an indent.
+  This placeholder line is deliberately very long so that it has to wrap on a phone screen and show how a long line of a poem behaves when it runs out of room on the right.
+
+  This line comes after a blank line.
+  This is the last placeholder line.

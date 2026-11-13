@@ -1,0 +1,48 @@
+---
+import '../styles/base.css';
+import '../styles/doors.css';
+import '../styles/lens.css';
+import '../styles/selection.css';
+import { ClientRouter } from 'astro:transitions';
+import { feelStyle } from '../lib/feel';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'A letter from Karan Gupta.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" style={feelStyle()}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <main class="page">
+      <slot />
+    </main>
+    <script>
+      import { initDoors } from '../scripts/doors';
+      import { initLens } from '../scripts/lens';
+      import { initTouch } from '../scripts/touch';
+      import { initArchive } from '../scripts/archive';
+      import { initNow } from '../scripts/now';
+      import { initSelection } from '../scripts/selection';
+
+      // Runs on the first load and again after every step through a doorway.
+      document.addEventListener('astro:page-load', () => {
+        initDoors();
+        initLens();
+        initTouch();
+        initArchive();
+        initNow();
+        initSelection();
+      });
+    </script>
+  </body>
+</html>

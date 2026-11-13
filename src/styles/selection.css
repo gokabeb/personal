@@ -1,0 +1,56 @@
+/* Selected text is highlighted in the spectrum, and the colour keeps moving
+   for as long as something is selected.
+
+   A highlight can only be one flat colour (browsers do not allow gradients
+   there), so the shimmer is that one colour travelling through the spectrum.
+   --sel is registered as a colour so the browser can blend between stops. */
+@property --sel {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2152f5;
+}
+
+::selection {
+  background-color: var(--sel);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  text-shadow: none;
+}
+
+/* The class is added by src/scripts/selection.ts only while text is selected,
+   so nothing animates the rest of the time. */
+html.selecting {
+  animation: sel-cycle var(--selection-ms) linear infinite;
+}
+@keyframes sel-cycle {
+  0% {
+    --sel: var(--s4);
+  }
+  14% {
+    --sel: var(--s5);
+  }
+  28% {
+    --sel: var(--s6);
+  }
+  43% {
+    --sel: var(--s0);
+  }
+  57% {
+    --sel: var(--s1);
+  }
+  71% {
+    --sel: var(--s2);
+  }
+  86% {
+    --sel: var(--s3);
+  }
+  100% {
+    --sel: var(--s4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.selecting {
+    animation: none;
+  }
+}

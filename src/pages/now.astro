@@ -1,0 +1,22 @@
+---
+import DoorPage from '../components/DoorPage.astro';
+import now from '../content/now.json';
+import { curly } from '../lib/typography';
+---
+
+<DoorPage slug="now">
+  <div class="now">
+    {/* These two fill themselves in from Spotify and Letterboxd.
+        Each stays hidden until its account is connected and answering. */}
+    <section class="now-section" data-feed="listening" hidden><h2>Listening</h2><div class="now-body"></div></section>
+    <section class="now-section" data-feed="watching" hidden><h2>Watching</h2><div class="now-body"></div></section>
+    {
+      now.notes.length > 0 && (
+        <section class="now-section">
+          <h2>Thinking &amp; Learning</h2>
+          <ul class="now-notes">{now.notes.map((note) => <li>{curly(note)}</li>)}</ul>
+        </section>
+      )
+    }
+  </div>
+</DoorPage>

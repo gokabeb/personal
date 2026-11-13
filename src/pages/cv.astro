@@ -1,0 +1,34 @@
+---
+import DoorPage from '../components/DoorPage.astro';
+import cv from '../content/cv.json';
+import { shimmerMarks } from '../lib/marks';
+import { curly } from '../lib/typography';
+
+// *single asterisks* in the text become italics (book titles); **double** shimmer.
+const rich = (text: string) => shimmerMarks(text).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+---
+
+<DoorPage slug="cv">
+  <div class="cv">
+    <p class="cv-name">Karan Gupta</p>
+    {cv.intro && <p class="cv-intro">{curly(cv.intro)}</p>}
+    {
+      cv.sections.map((section) => (
+        <section class="cv-section">
+          <h2>{curly(section.title)}</h2>
+          {section.items.map((item) => (
+            <div class="cv-item">
+              <div class="cv-head">
+                <span class="cv-heading">{curly(item.heading)}</span>
+                {item.dates && <span class="cv-dates">{item.dates}</span>}
+              </div>
+              {item.sub && <p class="cv-sub">{curly(item.sub)}</p>}
+              {item.description && <p class="cv-desc" set:html={rich(item.description)} />}
+            </div>
+          ))}
+        </section>
+      ))
+    }
+    {cv.resumePdf && <p class="cv-pdf"><a href={cv.resumePdf}>download as a PDF</a></p>}
+  </div>
+</DoorPage>

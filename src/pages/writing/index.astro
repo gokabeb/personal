@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import DoorPage from '../../components/DoorPage.astro';
+import { filterFor, haystack, kindLabel } from '../../lib/archive';
+import { curly } from '../../lib/typography';
+
+const pieces = (await getCollection('writing', ({ data }) => data.published)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<DoorPage slug="writing">
+  <div class="archive">
+    <div class="archive-tools">
+      <input type="search" aria-label="Search the writing" placeholder="Search by title, keyword, or year..." autocomplete="off" />
+      <div class="filters" role="group" aria-label="Show">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="poetry" aria-pressed="false">Poetry</button>
+        <button type="button" data-filter="essays" aria-pressed="false">Essays</button>
+      </div>
+    </div>
+    {
+      pieces.map((p) => {
+        const year = p.data.date.getUTCFullYear();
+        const href = p.data.externalUrl || (p.data.text ? `/writing/${p.id}` : undefined);
+        return (
+          <div
+            class="piece"
+            data-group={filterFor(p.data.kind) ?? ''}
+            data-search={haystack({ title: p.data.title, kind: p.data.kind, year, blurb: p.data.blurb, text: p.data.text })}
+          >
+            {href ? (
+              <a class="piece-title" href={href} rel={p.data.externalUrl ? 'noopener' : undefined}>{curly(p.data.title)}</a>
+            ) : (
+              <span class="piece-title">{curly(p.data.title)}</span>
+            )}
+            <span class="piece-meta">{kindLabel(p.data.kind)} · {year}</span>
+          </div>
+        );
+      })
+    }
+    <p class="no-results" hidden>Nothing matches that yet.</p>
+  </div>
+</DoorPage>

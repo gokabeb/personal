@@ -1,0 +1,19 @@
+---
+import { doorForHref } from '../lib/doors';
+
+interface Props {
+  href: string;
+  title?: string;
+}
+const { href, title } = Astro.props;
+const slug = doorForHref(href);
+const external = /^https?:\/\//.test(href);
+---
+
+{
+  slug ? (
+    <a class="door" data-door={slug} href={href} transition:name={`door-${slug}`}><slot /></a>
+  ) : (
+    <a href={href} title={title} rel={external ? 'noopener' : undefined}><slot /></a>
+  )
+}

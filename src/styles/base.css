@@ -1,0 +1,328 @@
+/* Times New Roman where the device has it; Tinos (same shapes and spacing)
+   where it does not. Android aliases the name "Times New Roman" to another
+   serif, but local() ignores aliases, so Android falls through to Tinos. */
+@font-face {
+  font-family: Letter;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'),
+    url('@fontsource/tinos/files/tinos-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Letter;
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'),
+    url('@fontsource/tinos/files/tinos-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: Letter;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'),
+    url('@fontsource/tinos/files/tinos-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Letter;
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Times New Roman Bold Italic'), local('TimesNewRomanPS-BoldItalicMT'),
+    url('@fontsource/tinos/files/tinos-latin-700-italic.woff2') format('woff2');
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: #fff;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #000;
+  font-family: Letter, serif;
+  overflow-x: hidden;
+}
+
+.page {
+  max-width: 62ch;
+  margin: 0 auto;
+  padding: 18vh 24px 22vh;
+  font-size: 20px;
+  line-height: 1.55;
+  color: #000;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 599px) {
+  .page {
+    font-size: 18px;
+    padding: 12vh 22px 18vh;
+  }
+}
+
+.page p {
+  margin: 0 0 1.1em;
+}
+
+h1 {
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0 0 2.2em;
+}
+
+/* Doorway pages */
+/* (.page in front so these win over the general paragraph spacing.) */
+.page .back-row {
+  margin: 0 0 3em;
+  font-size: 0.8em;
+}
+.page .back-row--end {
+  margin: 4em 0 0;
+}
+.year-label,
+.updated,
+.entry-date {
+  font-size: 0.8em;
+  font-style: italic;
+  margin: 0 0 1em;
+}
+.year + .year,
+.entry + .entry {
+  margin-top: 2.6em;
+}
+.updated {
+  margin-bottom: 2.6em;
+}
+/* Writing archive: search, filters, then one row per piece. */
+.archive-tools {
+  margin-bottom: 2.4em;
+}
+.archive input[type='search'] {
+  display: block;
+  width: 100%;
+  padding: 0.35em 0;
+  border: 0;
+  border-bottom: 0.5px solid #000;
+  border-radius: 0;
+  background: none;
+  color: #000;
+  font: inherit;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.archive input[type='search']::placeholder {
+  color: #000;
+  opacity: 0.45;
+  font-style: italic;
+}
+.archive input[type='search']:focus-visible {
+  border-bottom-width: 1.5px;
+}
+.filters {
+  display: flex;
+  gap: 1.4em;
+  margin-top: 0.9em;
+  font-size: 0.85em;
+}
+.filters button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #000;
+  font: inherit;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.filters button[aria-pressed='true'] {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 0.25em;
+}
+.filters button:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 3px;
+}
+.piece {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5em;
+  margin: 0 0 0.9em;
+}
+.piece[hidden] {
+  display: none;
+}
+.piece-meta {
+  flex: none;
+  font-size: 0.8em;
+  font-style: italic;
+  white-space: nowrap;
+}
+.page .no-results {
+  font-style: italic;
+  margin: 0;
+}
+
+/* Now: a culture column in three parts. */
+.now-section + .now-section {
+  border-top: 0.5px solid #000;
+  margin-top: 2em;
+  padding-top: 1.1em;
+}
+.now-section[hidden] {
+  display: none;
+}
+.now-section h2 {
+  font-size: 0.78em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 1.1em;
+}
+.page .now-line {
+  margin: 0 0 0.35em;
+}
+.now-label {
+  display: block;
+  font-size: 0.8em;
+  font-style: italic;
+  margin-top: 0.9em;
+}
+.now-line:first-child .now-label {
+  margin-top: 0;
+}
+.now-more {
+  display: inline-block;
+  margin-top: 0.5em;
+}
+.now-more {
+  font-size: 0.8em;
+}
+
+/* A long list shows five rows; the rest scroll inside the box. */
+.now-scroll {
+  --row: 1.9em;
+  max-height: calc(var(--row) * 5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #000 transparent;
+  margin-bottom: 0.5em;
+}
+.now-scroll .now-line {
+  height: var(--row);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* A soft fade at the bottom says there is more below. */
+.now-scroll[data-more] {
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 1.6em), transparent);
+  mask-image: linear-gradient(#000 calc(100% - 1.6em), transparent);
+}
+.now-scroll[data-more][data-end] {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.now-scroll:focus-visible {
+  outline: 1px solid #000;
+  outline-offset: 4px;
+}
+.now-notes {
+  margin: 0;
+  padding-left: 1.1em;
+}
+.now-notes li + li {
+  margin-top: 0.6em;
+}
+
+/* A poem keeps every line break and indent. Long lines wrap with a hanging indent. */
+.piece-text {
+  white-space: pre-wrap;
+}
+.piece-text .line {
+  padding-left: 2em;
+  text-indent: -2em;
+}
+
+/* Stepping through a doorway: the phrase travels to become the page title
+   while everything else cross-fades. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+h1.door-title {
+  width: fit-content;
+}
+
+/* The resume: a classic single column, sections divided by hairlines. */
+.cv-name {
+  font-size: 1.5em;
+  margin: 0 0 0.1em;
+}
+.page .cv-intro {
+  font-size: 0.85em;
+  font-style: italic;
+  margin: 0;
+}
+.cv-section {
+  border-top: 0.5px solid #000;
+  margin-top: 2em;
+  padding-top: 1.1em;
+}
+.cv-section h2 {
+  font-size: 0.78em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 1.3em;
+}
+.cv-item + .cv-item {
+  margin-top: 1.25em;
+}
+.cv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5em;
+}
+.cv-heading {
+  font-weight: 700;
+}
+.cv-dates {
+  flex: none;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.page .cv-sub {
+  font-style: italic;
+  margin: 0;
+}
+.page .cv-desc {
+  font-size: 0.92em;
+  line-height: 1.5;
+  margin: 0.3em 0 0;
+}
+.cv-pdf {
+  margin-top: 2.5em;
+}
+@media (max-width: 599px) {
+  .cv-head {
+    flex-direction: column;
+    gap: 0;
+  }
+}

@@ -1,4 +1,13 @@
-node_modules/
-dist/
-.env
-.astro/
+node_modules
+dist
+.vercel
+.env*
+.private-terms
+test-results
+playwright-report
+.superpowers
+.astro
+.DS_Store
+
+# Planning notes stay on this computer; the repository is public.
+docs/

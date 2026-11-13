@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import Page from '../../layouts/Page.astro';
+import { curly } from '../../lib/typography';
+
+export async function getStaticPaths() {
+  // Drafts get a page while developing so they can be previewed; never in the built site.
+  const pieces = await getCollection('writing', ({ data }) => Boolean(data.text) && (data.published || import.meta.env.DEV));
+  return pieces.map((piece) => ({ params: { slug: piece.id }, props: { piece } }));
+}
+
+const { piece } = Astro.props;
+const lines = (piece.data.text ?? '').replace(/\r\n/g, '\n').split('\n');
+---
+
+<Page title={`${curly(piece.data.title)} · Karan Gupta`}>
+  <p class="back-row"><a class="back" href="/writing">← back to the writing</a></p>
+  <h1>{curly(piece.data.title)}</h1>
+  <div class="piece-text">{lines.map((line) => <div class="line">{line === '' ? ' ' : curly(line)}</div>)}</div>
+  <p class="back-row back-row--end"><a class="back" href="/writing">← back to the writing</a></p>
+</Page>

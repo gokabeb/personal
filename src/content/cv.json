@@ -1,0 +1,128 @@
+{
+  "intro": "San Francisco · kgupta1219@gmail.com",
+  "resumePdf": null,
+  "sections": [
+    {
+      "title": "Education",
+      "items": [
+        {
+          "heading": "San Francisco University High School",
+          "sub": "Class of 2027",
+          "dates": "2023 – 2027",
+          "description": "Senior-year courses: Honors English Seminar, AP Calculus BC, AP Statistics, Advanced Projects in Physics, Chinese IV Honors."
+        }
+      ]
+    },
+    {
+      "title": "Work & Research",
+      "items": [
+        {
+          "heading": "Robotics Technician",
+          "sub": "Cardinal Robotics",
+          "dates": "Nov 2024 – present",
+          "description": "Lead inventor on a **78-claim provisional patent**, “Zero-Trust Network for Robots and IoT,” one of two cybersecurity patents filed. It keeps a robot connected to its maker’s cloud for maps and updates but blocks remote commands, so a hacked vendor cannot hijack a fleet. Deployed, mapped and maintained autonomous cleaning robots at **7 sites**, including Apple, Cadence Design Systems and two Sutter Health hospitals. Trained 20+ custodial staff to run them."
+        },
+        {
+          "heading": "Intern",
+          "sub": "Talos Management",
+          "dates": "Nov 2024 – present",
+          "description": "Designed and built the websites for Talos Management and Cardinal Robotics. Ran listening sessions with facility crews and **rewrote what the robots say out loud** based on what the crews told me."
+        },
+        {
+          "heading": "Research & Data Collection Volunteer",
+          "sub": "UCSF Neuroscape",
+          "dates": "Jun 2025 – Aug 2026",
+          "description": "Ran biosensing collection for **125 participants** across 14 modalities (BIOPAC, BioSemi EEG) for studies on gaming and memory in dementia patients, and on nature and anxiety. Wrote the lab’s onboarding documentation."
+        },
+        {
+          "heading": "Math Instructor",
+          "sub": "Mathnasium & independent tutoring",
+          "dates": "Sep 2023 – Apr 2026",
+          "description": "Tutored 80+ students from pre-algebra through calculus in groups of one to four. Promoted to Lead Instructor; twice Instructor of the Month."
+        }
+      ]
+    },
+    {
+      "title": "Leadership & Projects",
+      "items": [
+        {
+          "heading": "San Francisco Youth Poet Laureate",
+          "sub": "Office of the Mayor, SF Public Library, Youth Speaks, 826 Valencia",
+          "dates": "2025 – 2027",
+          "description": "The city’s **inaugural Youth Poet Laureate**. Performed at 25+ civic events, including opening the **Super Bowl LX** press conference and UCSF’s Colorectal Cancer Awareness Month. Shared a stage with U.S. Poet Laureate Arthur Sze at the Asia Society gala. Wrote the collection *I Can Feel You Across the Seas* and taught 40+ student poetry workshops."
+        },
+        {
+          "heading": "Founder",
+          "sub": "PlayKits, a 501(c)(3) nonprofit",
+          "dates": "Jun 2025 – present",
+          "description": "Turned play-therapy research into free kits, about $15 each to build, for kids going through trauma or grief. **200+ kits** delivered to 5 Bay Area clinics and shelters. Funded by the Rosenblatt Grant and proceeds from my children’s book."
+        },
+        {
+          "heading": "Playhouse Initiative Lead",
+          "sub": "Habitat for Humanity Greater San Francisco",
+          "dates": "Jun 2024 – present",
+          "description": "Directed logistics and builds of **50 playhouses** across 3 counties. Recruited and led 300+ volunteers in crews of 15. Wrote a 150-page construction and safety manual."
+        },
+        {
+          "heading": "Founder",
+          "sub": "Quark Capital",
+          "dates": "Oct 2025 – present",
+          "description": "Built **ATLAS**, a Python system that scans prediction markets in real time and flags mispricing, such as one event priced differently on two sites. Uses NLP to match questions across platforms."
+        },
+        {
+          "heading": "Founder & Lead Organizer",
+          "sub": "TEDxSFUHS Youth",
+          "dates": "2025 – present",
+          "description": "Secured the school’s first TEDx license, led a team of 10, coached 6 speakers and hosted 100+ attendees."
+        },
+        {
+          "heading": "Author & Illustrator",
+          "sub": "Come Play With Me!",
+          "dates": "2025 – 2026",
+          "description": "Wrote, illustrated and published a children’s book on play around the world, drawn from exchanges with children in India, Peru, Korea and Ghana. Featured on KRON4."
+        },
+        {
+          "heading": "VP of Community, Class Representative & Peer Advisor",
+          "sub": "San Francisco University High School",
+          "dates": "2023 – present",
+          "description": "Elected four years running. Write the weekly digest for 500+ students and mentor a cohort of 12 freshmen. Co-lead the South Asian Affinity Group."
+        }
+      ]
+    },
+    {
+      "title": "Honors",
+      "items": [
+        {
+          "heading": "San Francisco Youth Poet Laureate",
+          "sub": "One selected citywide",
+          "dates": "2025 – 2027",
+          "description": ""
+        },
+        {
+          "heading": "Congressional Award Gold Medal",
+          "sub": "800+ hours of service, fitness and personal growth",
+          "dates": "",
+          "description": ""
+        },
+        {
+          "heading": "Scholastic Art & Writing Gold Key",
+          "sub": "Poetry",
+          "dates": "",
+          "description": ""
+        },
+        {
+          "heading": "KQED Perspective Commentator",
+          "sub": "Aired on Bay Area public radio",
+          "dates": "",
+          "description": ""
+        },
+        {
+          "heading": "Rosenblatt Grant",
+          "sub": "School grant to scale PlayKits",
+          "dates": "",
+          "description": ""
+        }
+      ]
+    }
+  ]
+}
